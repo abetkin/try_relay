@@ -44,7 +44,13 @@ var Post = React.createClass({
             expanded: false,
         }
     },
-    
+    getData: function() {
+        var id = this.props.id
+        if (this.props.getById) {
+            return this.props.getById(id)
+        }
+        return posts[this.props.id]
+    },
     getDefaultProps: function() {
         return {
             descriptionSize: 140
@@ -60,19 +66,18 @@ var Post = React.createClass({
     },
     
     addComment: function(){
-        var newId = Object.keys(posts).length
-        var rand = getRandomInt(0, 10000)
-        posts[newId] = {
-            text: 'Comment ' + rand,
-            children: [],
-        }
-        var data = this.getData()
-        data.children.push(newId)
+        var add = this.props.addComment || (() => {
+            var newId = Object.keys(posts).length
+            var rand = getRandomInt(0, 10000)
+            posts[newId] = {
+                text: 'Comment ' + rand,
+                children: [],
+            }
+            var data = this.getData()
+            data.children.push(newId)
+        })
+        add()
         this.forceUpdate()
-    },
-
-    getData: function() {
-        return posts[this.props.id]
     },
 
     toggleExpanded: function(){

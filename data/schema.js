@@ -21,18 +21,18 @@ import {
 } from 'graphql-relay';
 
 import {
-  Blog,
+  User,
   Post,
-  getBlog,
-  getPosts,
+  me,
+  getPost,
   getCommentsFor,
 } from './database';
 
 const {nodeInterface, nodeField} = nodeDefinitions(
   (globalId) => {
     const {type, id} = fromGlobalId(globalId);
-    if (type === 'Blog') {
-      return getBlog(id);
+    if (type === 'User') {
+      return me
     } else if (type === 'Post') {
       return getPost(id);
     } else {
@@ -42,30 +42,14 @@ const {nodeInterface, nodeField} = nodeDefinitions(
   (obj) => {
     if (obj instanceof Post) {
       return postType;
-    } else if (obj instanceof Blog) {
-      return blogType;
+    } else if (obj instanceof User) {
+      return userType;
     } else {
       return null;
     }
   }
 );
 
-var blogType = new GraphQLObjectType({
-  name: 'Blog',
-  description: 'The blog everybody should have a post in',
-  fields: () => ({
-    id: globalIdField('Blog'),
-    posts: {
-      type: postConnection,
-      description: 'Posts',
-      args: connectionArgs,
-      resolve: (blog, args) => connectionFromArray(getPosts(), args),
-    },
-  }),
-  interfaces: [nodeInterface],
-});
-
-// todo test
 var userType = new GraphQLObjectType({
   name: 'User',
   description: 'Registered user',
@@ -104,16 +88,16 @@ var postType = new GraphQLObjectType({
   interfaces: [nodeInterface],
 });
 
-var {connectionType: postConnection} =
-  connectionDefinitions({name: 'Post', nodeType: postType});
+// var {connectionType: postConnection} =
+//   connectionDefinitions({name: 'Post', nodeType: postType});
 
 const queryType = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
     node: nodeField,
-    blog: {
-      type: blogType,
-      resolve: () => getBlog(),
+    rootPost: {
+      type: postType,
+      resolve: () => getPost(0),
     },
   }),
 });
@@ -123,6 +107,7 @@ const AddPostMutation = mutationWithClientMutationId({
   name: 'AddPost',
   inputFields: {
     parent_id: {type: new GraphQLNonNull(GraphQLID) },
+    title: {type: new GraphQLNonNull(GraphQLString) },
     text: {type: new GraphQLNonNull(GraphQLString) },
     tags: {type: new GraphQLList(GraphQLString)}
   },
@@ -143,6 +128,7 @@ const EditPostMutation = mutationWithClientMutationId({
   name: 'EditPost',
   inputFields: {
     id: {type: new GraphQLNonNull(GraphQLID)},
+    title: {type: new GraphQLNonNull(GraphQLString) },
     text: {type: new GraphQLNonNull(GraphQLString) },
     tags: {type: new GraphQLList(GraphQLString)}
   },

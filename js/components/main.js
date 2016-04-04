@@ -9,7 +9,7 @@ ReactDOM.render(
   document.getElementById("id_main")
 )
 
-ReactDOM.render(
-  <Try/>,
-  document.getElementById("id_try")
-)
+// ReactDOM.render(
+//   <Try/>,
+//   document.getElementById("id_try")
+// )
