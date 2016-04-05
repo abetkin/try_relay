@@ -21,18 +21,19 @@ import {
 } from 'graphql-relay';
 
 import {
-  Blog,
+  User,
   Post,
-  getBlog,
-  getPosts,
+  me,
+  getPost, posts,
   getCommentsFor,
+  createPost, editPost,
 } from './database';
 
 const {nodeInterface, nodeField} = nodeDefinitions(
   (globalId) => {
     const {type, id} = fromGlobalId(globalId);
-    if (type === 'Blog') {
-      return getBlog(id);
+    if (type === 'User') {
+      return me
     } else if (type === 'Post') {
       return getPost(id);
     } else {
@@ -42,30 +43,14 @@ const {nodeInterface, nodeField} = nodeDefinitions(
   (obj) => {
     if (obj instanceof Post) {
       return postType;
-    } else if (obj instanceof Blog) {
-      return blogType;
+    } else if (obj instanceof User) {
+      return userType;
     } else {
       return null;
     }
   }
 );
 
-var blogType = new GraphQLObjectType({
-  name: 'Blog',
-  description: 'The blog everybody should have a post in',
-  fields: () => ({
-    id: globalIdField('Blog'),
-    posts: {
-      type: postConnection,
-      description: 'Posts',
-      args: connectionArgs,
-      resolve: (blog, args) => connectionFromArray(getPosts(), args),
-    },
-  }),
-  interfaces: [nodeInterface],
-});
-
-// todo test
 var userType = new GraphQLObjectType({
   name: 'User',
   description: 'Registered user',
@@ -81,6 +66,15 @@ var postType = new GraphQLObjectType({
   description: 'A post',
   fields: () => ({
     id: globalIdField('Post'),
+    post_id: {
+      type: GraphQLInt,
+      resolve: (post) => {
+        return post.id
+      }
+    },
+    parent: {type: GraphQLInt},
+    title: {type: GraphQLString},
+    text: {type: GraphQLString},
     author: {
       type: userType,
       description: 'The post author',
@@ -96,24 +90,37 @@ var postType = new GraphQLObjectType({
     tags: {
       type: new GraphQLList(GraphQLString),
       description: 'Tags',
-      resolve: (post) => {
-        return post.tags // is it necessary ?
-      }, 
+      // resolve: (post) => {
+      //   return post.tags
+      // }, 
     },
   }),
   interfaces: [nodeInterface],
 });
 
-var {connectionType: postConnection} =
-  connectionDefinitions({name: 'Post', nodeType: postType});
+// var {connectionType: postConnection} =
+//   connectionDefinitions({name: 'Post', nodeType: postType});
 
 const queryType = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
-    node: nodeField,
-    blog: {
-      type: blogType,
-      resolve: () => getBlog(),
+    Post: {
+      description: 'Query posts',
+      args: {
+        id: {type: GraphQLInt},
+      },
+      type: postType,
+      resolve: (root, {id}) => {
+        let post = getPost(id)
+        return post
+      }
+    },
+    Posts: {
+      description: 'Query posts',
+      type: new GraphQLList(postType),
+      resolve: () => {
+          return posts
+        }
     },
   }),
 });
@@ -122,7 +129,8 @@ const queryType = new GraphQLObjectType({
 const AddPostMutation = mutationWithClientMutationId({
   name: 'AddPost',
   inputFields: {
-    parent_id: {type: new GraphQLNonNull(GraphQLID) },
+    parent_id: {type: new GraphQLNonNull(GraphQLInt) },
+    title: {type: new GraphQLNonNull(GraphQLString) },
     text: {type: new GraphQLNonNull(GraphQLString) },
     tags: {type: new GraphQLList(GraphQLString)}
   },
@@ -132,9 +140,9 @@ const AddPostMutation = mutationWithClientMutationId({
       resolve: ({post}) => post,
     },
   },
-  mutateAndGetPayload: ({parent_id, text, tags}) => {
-    const parentId = fromGlobalId(parent_id).id;
-    post = createPost({parentId, text, tags});
+  mutateAndGetPayload: ({parent_id, text, title, tags}) => {
+    // const parentId = fromGlobalId(parent_id).id;
+    let post = createPost({parent: parent_id, text, title, tags});
     return {post};
   },
 });
@@ -142,7 +150,8 @@ const AddPostMutation = mutationWithClientMutationId({
 const EditPostMutation = mutationWithClientMutationId({
   name: 'EditPost',
   inputFields: {
-    id: {type: new GraphQLNonNull(GraphQLID)},
+    post_id: {type: new GraphQLNonNull(GraphQLInt)},
+    title: {type: new GraphQLNonNull(GraphQLString) },
     text: {type: new GraphQLNonNull(GraphQLString) },
     tags: {type: new GraphQLList(GraphQLString)}
   },
@@ -151,14 +160,10 @@ const EditPostMutation = mutationWithClientMutationId({
       type: postType,
       resolve: ({post}) => post,
     },
-    // parent: {
-    //   type: postType,
-    //   resolve: () => getPost(post.parent),
-    // },
   },
-  mutateAndGetPayload: ({id, text, tags}) => {
-    const postId = fromGlobalId(id).id;
-    post = editPost(postId, {text, tags});
+  mutateAndGetPayload: ({post_id, text, title, tags}) => {
+    // const postId = fromGlobalId(id).id;
+    let post = editPost(post_id, {text, title, tags});
     return {post};
   },
 });
@@ -168,6 +173,7 @@ const mutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
     addPost: AddPostMutation,
+    editPost: EditPostMutation,
   }),
 });
 

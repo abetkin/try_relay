@@ -14,29 +14,80 @@ function getRandomInt(min, max) {
 var {createFactory} = React,
     D = React.DOM
 
-var posts = {
-    root: {
+let posts = [
+    {
+        id: 0,
+        parent: null,
+        title: 'P0',
         text: 'root',
-        children: [1,2,3,4],
     },
-    1 : {
+    {
+        id: 1,
+        parent: 0,
+        title: 'P1',
         text: 'Post 1',
-        children: [2, 4]
     },
-    2: {
+    {
+        id: 2,
+        parent: 1,
+        title: 'P2',
         text: 'Post 2',
-        children: [3],    
     },
-    3: {
+    {
+        id: 3,
+        parent: 2,
+        title: 'P2',
         text: 'Post 3',
-        children: []
     },
-    4: {
+    {
+        id: 4,
+        parent: 3,
+        title: 'P4',
         text: 'Post 4',
-        children: []
     },
+]
+
+
+// var declarePosts = {
+//     root: {
+//         text: 'root',
+//         children: [1,2,3,4],
+//     },
+//     1 : {
+//         text: 'Post 1',
+//         children: [2, 4]
+//     },
+//     2: {
+//         text: 'Post 2',
+//         children: [3],    
+//     },
+//     3: {
+//         text: 'Post 3',
+//         children: []
+//     },
+//     4: {
+//         text: 'Post 4',
+//         children: []
+//     },
     
-}
+// }
+
+// var posts = (() => {
+//     let processed = new Set()
+//     let result = []
+//     Object.keys(declarePosts).forEach((post_id) => {
+//         if (processed.has(post_id))
+//             return
+//         let post = declarePosts[post_id]
+//         post.children
+        
+//     })
+//     return result
+// })()
+
+
+
+
 
 var Post = React.createClass({
     getInitialState: function() {
@@ -60,19 +111,27 @@ var Post = React.createClass({
     },
     
     addComment: function(){
-        var newId = Object.keys(posts).length
-        var rand = getRandomInt(0, 10000)
-        posts[newId] = {
+        let rand = getRandomInt(0, 10000)
+        let newData = {
             text: 'Comment ' + rand,
-            children: [],
+            // title: 'Title ' + rand,
+            parent: this.props.data.id,
         }
-        var data = this.getData()
-        data.children.push(newId)
+        let add = this.props.addPost || ((data) => {
+            data.id = posts.length
+            posts.push(data)
+        })
+        add(newData)
         this.forceUpdate()
     },
 
-    getData: function() {
-        return posts[this.props.id]
+    getChildren: function() {
+        if (this.props.getChildren) {
+            return this.props.getChildren()
+        }
+        let children = []
+        let id = this.props.data.id
+        return posts.filter((post) => post.parent == id)
     },
 
     toggleExpanded: function(){
@@ -82,18 +141,16 @@ var Post = React.createClass({
     },
     
     getDetails: function() {
-        var data = this.getData()
+        var children = this.getChildren()
         return (<div style={{paddingLeft: this.offset}}>
-            {data.children.map((post_id) => {
-                return <Post id={post_id} key={post_id} parent={this}/>
-            })}
+            {children.map(post => <Post data={post}/>)}
             <a href='#' onClick={this.addComment}>Comment</a>
         </div>)
     },
     
     getShortDescription: function() {
         var restrict = this.props.descriptionSize
-        var data = this.getData()
+        var data = this.props.data
         if (data.title) {
             restrict -= data.title.length
         }
@@ -102,8 +159,9 @@ var Post = React.createClass({
             text = text.substring(0, text.length - 3) + '...'
         }
         return (<span>
-            {data.title && <h6>data.title</h6>}
-            <a href='#' onClick={this.toggleExpanded} className="link-gray-dark">{text}</a>
+            <a href='#' onClick={this.toggleExpanded} className="link-gray-dark">
+                {data.title && <b>{data.title}</b>} {text}
+            </a>
         </span>)
     },
 
@@ -115,4 +173,4 @@ var Post = React.createClass({
     }
 })
 
-module.exports = {Post}
+module.exports = {Post, posts}

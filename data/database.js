@@ -1,29 +1,41 @@
 
-export class Blog {}
+export class User {}
 export class Post {}
 
-const blog = new Blog();
-blog.id = '1';
+export const me = new User();
+me.id = '1';
 
-const posts = [];
+const blog = new Post()
+blog.id = 0
+blog.title = 'Blog'
+blog.text = `
+  Any posts are welcome
+`
+blog.tags = ['root', 'moderated']
+blog.comments = []
 
-
-export function getBlog() { return blog; }
-export function getPosts() { return posts; }
+export const posts = [blog]
 
 export function getCommentsFor(post_id) {
-  return posts.filter(post => post.parent === post_id);
+  return posts.filter(post => post.parent === post_id)
 }
 
-export function createPost({parent, text, tags}) {
+export function getPost(id) {
+  return posts.find(post => post.id === id)
+}
+
+export function createPost({parent, text, tags, title}) {
   var newPost = {
-    parent, text, tags
+    parent, text, tags, title,
+    id: posts.length,
   }
   posts.push(newPost)
+  return newPost
 }
 
-export function editPost(postId, {text, tags}) {
-  const post = posts.find(postId)
+export function editPost(postId, {title, text, tags}) {
+  const post = getPost(postId)
+  post.title = title
   post.text = text
   post.tags = tags
   return post

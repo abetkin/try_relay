@@ -1,30 +1,53 @@
 
-import SomeMutation from '../mutations/SomeMutation';
+import AddPostMutation from '../mutations/AddPostMutation';
+import EditPostMutation from '../mutations/EditPostMutation';
 import {Post} from './Post'
 
 import React from 'react';
 import Relay from 'react-relay';
 
-class TodoApp extends React.Component {
-  mutate = (text) => {
+const PostApp = React.createClass({
+  addPost: function() {
+    var params = {
+        parent: this.id,
+        
+    }
     Relay.Store.commitUpdate(
-      new SomeMutation({attr: text})
+      new AddPostMutation({attr: text})
     );
-  };
-  render() {
+  },
+  render: function() {
     return (
-      <Post mutate={this.mutate} />
-    );
+      <Post id={0}
+            getById={this.getById}
+      />
+    )
+  },
+  getById: function(id) {
+      this.props.data.comments.find(
+          //
+      )
+      // can't do
   }
-}
+  
+})
 
-export default Relay.createContainer(TodoApp, {
+
+export default Relay.createContainer(App, {
   fragments: {
-    viewer: () => Relay.QL`
-      fragment on User {
-        totalCount,
-        ${AddTodoMutation.getFragment('viewer')},
-        ${TodoListFooter.getFragment('viewer')},
+    // postInfo: () => RelayQL`
+    // `,
+    data: () => Relay.QL`
+      fragment on Post {
+        title,
+        text,
+        tags,
+        comments(first: 5) {
+            id,
+            title,
+            text,
+            tags,
+        }
       }
     `,
   },
