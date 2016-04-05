@@ -1,6 +1,6 @@
 
 import AddPostMutation from '../mutations/AddPostMutation';
-import EditPostMutation from '../mutations/EditPostMutation';
+// import EditPostMutation from '../mutations/EditPostMutation';
 import {Post} from './Post'
 
 import React from 'react';
@@ -13,21 +13,12 @@ const PostApp = React.createClass({
         
     }
     Relay.Store.commitUpdate(
-      new AddPostMutation({attr: text})
+      new AddPostMutation({data: this.props.data})
     );
   },
   render: function() {
-    return (
-      <Post id={0}
-            getById={this.getById}
-      />
-    )
-  },
-  getById: function(id) {
-      this.props.data.comments.find(
-          //
-      )
-      // can't do
+    let data = this.props.data
+    return <Post data={data}/>
   }
   
 })
