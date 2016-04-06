@@ -1,5 +1,4 @@
-
-import AddPostMutation from '../mutations/AddPostMutation';
+import AddPostMutation from '../mutations/AddPostMutation'
 // import EditPostMutation from '../mutations/EditPostMutation';
 import {Post} from './Post'
 
@@ -18,28 +17,28 @@ const PostApp = React.createClass({
   },
   render: function() {
     let data = this.props.data
+    debugger
     return <Post data={data}/>
   }
   
 })
 
 
-export default Relay.createContainer(App, {
+export default Relay.createContainer(PostApp, {
   fragments: {
     // postInfo: () => RelayQL`
     // `,
-    data: () => Relay.QL`
+    att: () => Relay.QL`
       fragment on Post {
-        title,
-        text,
-        tags,
-        comments(first: 5) {
-            id,
-            title,
-            text,
-            tags,
-        }
+        id
       }
     `,
   },
 });
+
+        // comments {
+        //     id,
+        //     title,
+        //     text,
+        //     tags,
+        // }

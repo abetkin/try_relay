@@ -101,27 +101,37 @@ var postType = new GraphQLObjectType({
 // var {connectionType: postConnection} =
 //   connectionDefinitions({name: 'Post', nodeType: postType});
 
+// let testField = {
+//   type: GraphQLInt,
+//   description: "test test",
+//   resolve: () => 3,
+// }
+
+
+
 const queryType = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
-    Post: {
+    // rename ?
+    getPost: {
       description: 'Query posts',
       args: {
         id: {type: GraphQLInt},
       },
       type: postType,
       resolve: (root, {id}) => {
-        let post = getPost(id)
-        return post
+        return getPost(id)
       }
     },
-    Posts: {
-      description: 'Query posts',
-      type: new GraphQLList(postType),
-      resolve: () => {
-          return posts
-        }
-    },
+    // test: testField,
+    // Posts: {
+    //   description: 'Query posts',
+    //   type: new GraphQLList(postType),
+    //   resolve: () => {
+    //       return posts
+    //     }
+    // },
+    node: nodeField,
   }),
 });
 

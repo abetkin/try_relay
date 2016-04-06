@@ -10,7 +10,15 @@ import PostAppHomeRoute from './routes/PostAppHomeRoute';
 ReactDOM.render(
   <Relay.RootContainer
     Component={PostApp}
-    route={new PostAppHomeRoute()}
+    route={new PostAppHomeRoute({rootId: 0})}
   />,
   document.getElementById('id_main')
-);
+)
+
+// ReactDOM.render(
+//   <Relay.RootContainer
+//     Component={PostApp}
+//     route={new TestRoute()}
+//   />,
+//   document.getElementById('id_main')
+// );

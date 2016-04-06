@@ -1,0 +1,56 @@
+input AddPostInput {
+  parent_id: Int!
+  title: String!
+  text: String!
+  tags: [String]
+  clientMutationId: String!
+}
+
+type AddPostPayload {
+  post: Post
+  clientMutationId: String!
+}
+
+input EditPostInput {
+  post_id: Int!
+  title: String!
+  text: String!
+  tags: [String]
+  clientMutationId: String!
+}
+
+type EditPostPayload {
+  post: Post
+  clientMutationId: String!
+}
+
+type Mutation {
+  addPost(input: AddPostInput!): AddPostPayload
+  editPost(input: EditPostInput!): EditPostPayload
+}
+
+interface Node {
+  id: ID!
+}
+
+type Post implements Node {
+  id: ID!
+  post_id: Int
+  parent: Int
+  title: String
+  text: String
+  author: User
+  comments: [Post]
+  tags: [String]
+}
+
+type Query {
+  getPost(id: Int): Post
+  test: Int
+  node(id: ID!): Node
+}
+
+type User implements Node {
+  id: ID!
+  email: String
+}
