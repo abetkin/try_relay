@@ -38,18 +38,6 @@
               "deprecationReason": null
             },
             {
-              "name": "test",
-              "description": "test test",
-              "args": [],
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              },
-              "isDeprecated": false,
-              "deprecationReason": null
-            },
-            {
               "name": "node",
               "description": "Fetches an object given its ID",
               "args": [

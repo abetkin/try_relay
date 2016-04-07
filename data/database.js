@@ -6,7 +6,7 @@ export const me = new User();
 me.id = '1';
 
 const blog = new Post()
-blog.id = 0
+blog.id = 1
 blog.title = 'Blog'
 blog.text = `
   Any posts are welcome
@@ -21,7 +21,10 @@ export function getCommentsFor(post_id) {
 }
 
 export function getPost(id) {
-  return posts.find(post => post.id === id)
+  
+  let ret = posts.find(post => post.id === id)
+  console.log('getPost', id, ret)
+  return ret
 }
 
 export function createPost({parent, text, tags, title}) {

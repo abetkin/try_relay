@@ -31,7 +31,8 @@ import {
 
 const {nodeInterface, nodeField} = nodeDefinitions(
   (globalId) => {
-    const {type, id} = fromGlobalId(globalId);
+    const {type, id} = fromGlobalId(globalId)
+    console.log('nodedef', type, id)
     if (type === 'User') {
       return me
     } else if (type === 'Post') {
@@ -119,7 +120,9 @@ const queryType = new GraphQLObjectType({
         id: {type: GraphQLInt},
       },
       type: postType,
-      resolve: (root, {id}) => {
+      resolve: (root, params) => {
+        let {id} = params
+        console.log('getting post', root, params)
         return getPost(id)
       }
     },

@@ -2,12 +2,13 @@ import Relay from 'react-relay';
 
 export default class extends Relay.Route {
   static queries = {
-    att: () => Relay.QL`query {
-      getPost(id: $rootId)
-    }`,
+    att: () => Relay.QL`query { getPost(id: 1) }`,
+    // att: () => Relay.QL`query {
+    //   getPost(id: 0)
+    // }`,
   }
 
-  static routeName = 'TestRoute';
+  static routeName = 'PostAppHomeRoute';
 }
 
         // title
