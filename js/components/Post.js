@@ -114,8 +114,8 @@ var Post = React.createClass({
         let rand = getRandomInt(0, 10000)
         let newData = {
             text: 'Comment ' + rand,
-            // title: 'Title ' + rand,
-            parent: this.props.data.id,
+            title: '',
+            parent: this.props.data.post_id,
         }
         let add = this.props.addPost || ((data) => {
             data.id = posts.length
@@ -125,14 +125,9 @@ var Post = React.createClass({
         this.forceUpdate()
     },
 
-    getChildren: function() {
-        if (this.props.getChildren) {
-            return this.props.getChildren()
-        }
-        let children = []
-        let id = this.props.data.id
-        return posts.filter((post) => post.parent == id)
-    },
+    // getChildren: function() {
+    //     return this.props.data.comments 
+    // },
 
     toggleExpanded: function(){
         this.setState({
@@ -140,10 +135,11 @@ var Post = React.createClass({
         })
     },
     
-    getDetails: function() {
+    getComments: function() {
         var children = this.getChildren()
         return (<div style={{paddingLeft: this.offset}}>
-            {children.map(post => <Post data={post}/>)}
+            {children.map(post => <Post data={post} addPost={this.props.addPost}
+                                        renderPost={this.props.renderPost}/>)}
             <a href='#' onClick={this.addComment}>Comment</a>
         </div>)
     },
@@ -166,9 +162,13 @@ var Post = React.createClass({
     },
 
     render: function() {
+        if () {
+            // render Comments
+            return this.props.renderPost()
+        }
         return (<div>
             {this.getShortDescription()}
-            {this.state.expanded && this.getDetails()}
+            {this.state.expanded && this.getComments()}
         </div>)
     }
 })

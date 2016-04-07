@@ -113,7 +113,6 @@ var postType = new GraphQLObjectType({
 const queryType = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
-    // rename ?
     getPost: {
       description: 'Query posts',
       args: {
@@ -126,14 +125,11 @@ const queryType = new GraphQLObjectType({
         return getPost(id)
       }
     },
-    // test: testField,
-    // Posts: {
-    //   description: 'Query posts',
-    //   type: new GraphQLList(postType),
-    //   resolve: () => {
-    //       return posts
-    //     }
-    // },
+    allPosts: {
+      description: 'All posts',
+      type: new GraphQLList(postType),
+      resolve: () => posts,
+    },
     node: nodeField,
   }),
 });

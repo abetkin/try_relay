@@ -9,13 +9,12 @@ export default class AddPostMutation extends Relay.Mutation {
   }
 
   getVariables() {
-    // default change
     let data = this.props.data
-    let rand = getRandomInt(0, 10000)
-            
+    debugger
     return {
-      parent_id: data.id,
-      text: 'Comment ' + rand,
+      parent_id: data.parent,
+      text: data.text,
+      title: data.title
     }
   }
 
@@ -24,6 +23,7 @@ export default class AddPostMutation extends Relay.Mutation {
       fragment on AddPostPayload @relay(pattern: true) {
         post {
           post_id
+          parent
           title
           text
           tags

@@ -6,19 +6,15 @@ import React from 'react';
 import Relay from 'react-relay';
 
 const PostApp = React.createClass({
-  addPost: function() {
-    var params = {
-        parent: this.id,
-        
-    }
+  addPost: function(newData) {
     Relay.Store.commitUpdate(
-      new AddPostMutation({data: this.props.data})
+      new AddPostMutation({data: newData})
     );
   },
   render: function() {
     let data = this.props.data
-    debugger
-    return <Post data={data}/>
+    return <Post data={data}
+                 addPost={this.addPost}/>
   }
   
 })
@@ -28,17 +24,21 @@ export default Relay.createContainer(PostApp, {
   fragments: {
     // postInfo: () => RelayQL`
     // `,
-    att: () => Relay.QL`
+    data: () => Relay.QL`
       fragment on Post {
-        id
+        title
+        text
+        tags
+        post_id
+        comments {
+          title
+          text
+          parent
+          post_id
+          tags
+        }
       }
     `,
   },
 });
 
-        // comments {
-        //     id,
-        //     title,
-        //     text,
-        //     tags,
-        // }

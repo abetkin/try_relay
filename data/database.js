@@ -28,10 +28,11 @@ export function getPost(id) {
 }
 
 export function createPost({parent, text, tags, title}) {
-  var newPost = {
+  let newPost = {
     parent, text, tags, title,
-    id: posts.length,
+    id: blog.id + posts.length,
   }
+  console.log('new post', newPost)
   posts.push(newPost)
   return newPost
 }
