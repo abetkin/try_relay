@@ -10,7 +10,6 @@ export default class AddPostMutation extends Relay.Mutation {
 
   getVariables() {
     let data = this.props.data
-    debugger
     return {
       parent_id: data.parent,
       text: data.text,
@@ -40,22 +39,12 @@ export default class AddPostMutation extends Relay.Mutation {
 
   getConfigs() {
     return []
-    // return [{
-    //   type: 'FIELDS_CHANGE',
-    //   fieldIDs: {
-    //     // todo
-    //     hidingSpot: this.props.hidingSpot.id,
-    //     game: this.props.game.id,
-    //   },
-    // }];
   }
 
   getOptimisticResponse() {
-    // use fragments
     return {
       post: {
         parent_id: this.props.data.id,
-        // text: "Sample text",
       }
     };
   }
