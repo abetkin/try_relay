@@ -78,7 +78,6 @@ let PostInfoRoot = React.createClass({
 
 
 let Post = React.createClass({
-  // TODO offset
   
   getInitialState: function() {
     return {expanded: !!this.props.expanded}
@@ -139,7 +138,9 @@ let PostComments = React.createClass({
                                   postId={post.post_id}
                                   toggleExpanded={this.props.toggleExpanded}
                                   offset={offset} />)}
-      <a href='#' onClick={this.addComment}>Comment</a>
+      <a href='#' onClick={this.addComment}>
+        <i>add comment</i>
+      </a>
     </div>)
       
   }
