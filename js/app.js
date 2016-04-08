@@ -84,6 +84,10 @@ let Post = React.createClass({
     return {expanded: !!this.props.expanded}
   },
   
+  getDefaultProps: function() {
+    return {offset: 0}
+  },
+  
   toggleExpanded: function() {
     this.setState({expanded: !this.state.expanded})
   },
@@ -103,7 +107,9 @@ let Post = React.createClass({
       {this.renderPostInfo()}
       {this.state.expanded &&
         <PostCommentsRoot postId={postId}
-                          toggleExpanded={this.toggleExpanded} />}
+                          toggleExpanded={this.toggleExpanded}
+                          offset={this.props.offset} />
+      }
     </div>)
   }
 })
@@ -112,10 +118,7 @@ let PostComments = React.createClass({
   
   addComment: function() {
     let callbacks = {
-        onSuccess: (resp) => {
-          console.log('add post success', resp)
-          this.props.forceUpdate()
-        }
+        onSuccess: (resp) => this.props.forceUpdate()
     }
     let newData = {
       text: 'Comment ' + getRandomInt(0, 10000),
@@ -130,10 +133,12 @@ let PostComments = React.createClass({
   
   render: function() {
     let items = this.props.data.comments
-    return (<div>
-      {items.map((post) => <Post postInfo={post}
+    let offset = this.props.offset + 10
+    return (<div style={{paddingLeft: offset}}>
+      {items.map((post) => <Post  postInfo={post}
                                   postId={post.post_id}
-                                  toggleExpanded={this.props.toggleExpanded} />)}
+                                  toggleExpanded={this.props.toggleExpanded}
+                                  offset={offset} />)}
       <a href='#' onClick={this.addComment}>Comment</a>
     </div>)
       
@@ -162,6 +167,7 @@ let PostCommentsRoot = React.createClass({
   renderFetched: function(data) {
     return <PostCommentsCo toggleExpanded={this.props.toggleExpanded}
                      postId={this.props.postId}
+                     offset={this.props.offset}
                      forceUpdate={() => this.forceUpdate()}
                      {...data} />
   },
