@@ -3,20 +3,14 @@ import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Relay from 'react-relay';
-// import PostApp from './components/PostApp';
 
 import PostAppHomeRoute from './routes/PostAppHomeRoute';
+import AddPostMutation from './mutations/AddPostMutation'
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-
-
-import AddPostMutation from './mutations/AddPostMutation'
-// import EditPostMutation from './mutations/EditPostMutation';
-// import {PostInfo} from './components/PostInfo'
-// import {PostComments} from './components/PostComments'
 
 let PostInfo = React.createClass({
   getDefaultProps: function() {
@@ -67,10 +61,9 @@ let PostInfoRoot = React.createClass({
   },
   
   render: function() {
-    let postId = this.props.postId
     return (<Relay.RootContainer
       Component={PostInfoCo}
-      route={new PostAppHomeRoute({rootId: postId})}
+      route={new PostAppHomeRoute({rootId: this.props.postId})}
       renderFetched={this.renderFetched}
     />)
   }
@@ -116,22 +109,21 @@ let Post = React.createClass({
 let PostComments = React.createClass({
   
   addComment: function() {
-    let callbacks = {
-        onSuccess: (resp) => this.props.forceUpdate()
-    }
     let newData = {
       text: 'Comment ' + getRandomInt(0, 10000),
       title: '',
       parent: this.props.postId,
     }
     Relay.Store.commitUpdate(
-      new AddPostMutation({data: newData}),
-      callbacks
+      new AddPostMutation({postData: newData, id: this.props.data.id})
     )
   },
   
   render: function() {
     let items = this.props.data.comments
+    
+    
+    
     let offset = this.props.offset + 10
     return (<div style={{paddingLeft: offset}}>
       {items.map((post) => <Post  postInfo={post}
@@ -151,6 +143,7 @@ let PostCommentsCo = Relay.createContainer(PostComments, {
   fragments: {
     data: () => Relay.QL`
       fragment on Post {
+        id
         comments {
           title
           text
@@ -164,12 +157,11 @@ let PostCommentsCo = Relay.createContainer(PostComments, {
 })
 
 let PostCommentsRoot = React.createClass({
-  
+
   renderFetched: function(data) {
     return <PostCommentsCo toggleExpanded={this.props.toggleExpanded}
                      postId={this.props.postId}
                      offset={this.props.offset}
-                     forceUpdate={() => this.forceUpdate()}
                      {...data} />
   },
   

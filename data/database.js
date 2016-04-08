@@ -21,9 +21,7 @@ export function getCommentsFor(post_id) {
 }
 
 export function getPost(id) {
-  
   let ret = posts.find(post => post.id === id)
-  console.log('getPost', id, ret)
   return ret
 }
 

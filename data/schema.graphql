@@ -46,6 +46,7 @@ type Post implements Node {
 
 type Query {
   getPost(id: Int): Post
+  allPosts: [Post]
   node(id: ID!): Node
 }
 

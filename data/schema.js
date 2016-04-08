@@ -91,23 +91,10 @@ var postType = new GraphQLObjectType({
     tags: {
       type: new GraphQLList(GraphQLString),
       description: 'Tags',
-      // resolve: (post) => {
-      //   return post.tags
-      // }, 
     },
   }),
   interfaces: [nodeInterface],
 });
-
-// var {connectionType: postConnection} =
-//   connectionDefinitions({name: 'Post', nodeType: postType});
-
-// let testField = {
-//   type: GraphQLInt,
-//   description: "test test",
-//   resolve: () => 3,
-// }
-
 
 
 const queryType = new GraphQLObjectType({
@@ -119,9 +106,7 @@ const queryType = new GraphQLObjectType({
         id: {type: GraphQLInt},
       },
       type: postType,
-      resolve: (root, params) => {
-        let {id} = params
-        console.log('getting post', root, params)
+      resolve: (root, {id}) => {
         return getPost(id)
       }
     },
@@ -146,13 +131,12 @@ const AddPostMutation = mutationWithClientMutationId({
   outputFields: {
     post: {
       type: postType,
-      resolve: ({post}) => post,
     },
   },
   mutateAndGetPayload: ({parent_id, text, title, tags}) => {
-    // const parentId = fromGlobalId(parent_id).id;
-    let post = createPost({parent: parent_id, text, title, tags});
-    return {post};
+    let created = createPost({parent: parent_id, text, title, tags})
+    let parent = getPost(parent_id)
+    return {post: parent}
   },
 });
 
@@ -171,7 +155,6 @@ const EditPostMutation = mutationWithClientMutationId({
     },
   },
   mutateAndGetPayload: ({post_id, text, title, tags}) => {
-    // const postId = fromGlobalId(id).id;
     let post = editPost(post_id, {text, title, tags});
     return {post};
   },
