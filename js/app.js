@@ -89,7 +89,7 @@ let PostInfoRoot = React.createClass({
   render: function() {
     return (<Relay.RootContainer
       Component={PostInfoCo}
-      route={new PostAppHomeRoute({rootId: this.props.postId})}
+      route={new PostAppHomeRoute({postId: this.props.postId})}
       renderFetched={this.renderFetched}
     />)
   }
@@ -195,10 +195,9 @@ let PostCommentsRoot = React.createClass({
   },
   
   render: function() {
-    let postId = this.props.postId
     return (<Relay.RootContainer
       Component={PostCommentsCo}
-      route={new PostAppHomeRoute({rootId: postId})}
+      route={new PostAppHomeRoute({postId: this.props.postId})}
       renderFetched={this.renderFetched}
     />)
   }
