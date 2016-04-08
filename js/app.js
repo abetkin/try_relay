@@ -81,8 +81,8 @@ let PostInfoCo = Relay.createContainer(PostInfo, {
 let PostInfoRoot = React.createClass({
   
   renderFetched: function(data) {
-    return <PostInfoCo toggleExpanded={this.props.toggleExpanded}
-                     postId={this.props.postId}
+    return <PostInfoCo 
+                     {...this.props}
                      {...data} />
   },
   
@@ -115,17 +115,19 @@ let Post = React.createClass({
       return <PostInfo data={this.props.postInfo}
                        toggleExpanded={this.toggleExpanded} />
     }
-    return <PostInfoRoot postId={this.props.postId}
-                         toggleExpanded={this.toggleExpanded} />
+    return <PostInfoRoot 
+                         toggleExpanded={this.toggleExpanded} 
+                         {...this.props} />
   },
   
   render: function() {
     return (<div>
       {this.renderPostInfo()}
       {this.state.expanded &&
-        <PostCommentsRoot postId={this.props.postId}
+        <PostCommentsRoot 
                           toggleExpanded={this.toggleExpanded}
-                          offset={this.props.offset} />
+                          {...this.props}
+                          />
       }
     </div>)
   }
@@ -188,9 +190,8 @@ let PostCommentsCo = Relay.createContainer(PostComments, {
 let PostCommentsRoot = React.createClass({
 
   renderFetched: function(data) {
-    return <PostCommentsCo toggleExpanded={this.props.toggleExpanded}
-                     postId={this.props.postId}
-                     offset={this.props.offset}
+    return <PostCommentsCo
+                     {...this.props}
                      {...data} />
   },
   
