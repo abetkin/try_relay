@@ -21,7 +21,7 @@ let PostInfo = React.createClass({
   
   renderHeader: function() {
     let data = this.props.data
-    let author = <i> {data.author.name}</i>
+    let author = <i>{data.author.name}</i>
     if (!data.title) {
       return (<span>
         {author}
