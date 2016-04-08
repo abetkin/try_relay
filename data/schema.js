@@ -58,6 +58,7 @@ var userType = new GraphQLObjectType({
   fields: () => ({
     id: globalIdField('User'),
     email: {type: GraphQLString},
+    name: {type: GraphQLString},
   }),
   interfaces: [nodeInterface],
 });
@@ -79,6 +80,7 @@ var postType = new GraphQLObjectType({
     author: {
       type: userType,
       description: 'The post author',
+      resolve: () => me,
     },
     comments: {
       type: new GraphQLList(postType),

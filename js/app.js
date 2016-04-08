@@ -19,6 +19,29 @@ let PostInfo = React.createClass({
       }
   },
   
+  renderHeader: function() {
+    let data = this.props.data
+    let author = <i> {data.author.name}</i>
+    if (!data.title) {
+      return (<span>
+        {author}
+        <span> </span>
+        {this.makeExpandLink(<span>commented</span>)}
+        </span>)
+    }
+    return (<span>
+      {this.makeExpandLink(<b>{data.title}</b>)}
+      <span> by {author}</span>
+    </span>)
+  },
+  
+  makeExpandLink: function(elt) {
+    return <a href='#' onClick={this.props.toggleExpanded}
+                    className="link-gray-dark">
+            {elt}
+        </a>
+  },
+  
   render: function() {
     var restrict = this.props.descriptionSize
     var data = this.props.data
@@ -30,10 +53,9 @@ let PostInfo = React.createClass({
         text = text.substring(0, text.length - 3) + '...'
     }
     return (<span>
-        <a href='#' onClick={this.props.toggleExpanded}
-                    className="link-gray-dark">
-            {data.title && <b>{data.title}</b>} {text}
-        </a>
+        {this.renderHeader()}
+        { text && <p>{text}</p>}
+        
     </span>)
   }
 })
@@ -44,6 +66,10 @@ let PostInfoCo = Relay.createContainer(PostInfo, {
     data: () => Relay.QL`
       fragment on Post {
         title
+        author {
+          name
+          email
+        }
         text
         tags
         post_id
@@ -94,11 +120,10 @@ let Post = React.createClass({
   },
   
   render: function() {
-    let postId = this.props.postId
     return (<div>
       {this.renderPostInfo()}
       {this.state.expanded &&
-        <PostCommentsRoot postId={postId}
+        <PostCommentsRoot postId={this.props.postId}
                           toggleExpanded={this.toggleExpanded}
                           offset={this.props.offset} />
       }
@@ -147,6 +172,10 @@ let PostCommentsCo = Relay.createContainer(PostComments, {
         comments {
           title
           text
+          author {
+            name
+            email
+          }
           parent
           post_id
           tags
@@ -170,7 +199,6 @@ let PostCommentsRoot = React.createClass({
     return (<Relay.RootContainer
       Component={PostCommentsCo}
       route={new PostAppHomeRoute({rootId: postId})}
-      forceFetch={true}
       renderFetched={this.renderFetched}
     />)
   }

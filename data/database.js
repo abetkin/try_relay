@@ -3,7 +3,9 @@ export class User {}
 export class Post {}
 
 export const me = new User();
-me.id = '1';
+me.id = '1'
+me.email = 'abvit89@gmail.com'
+me.name = 'vitalik'
 
 const blog = new Post()
 blog.id = 1

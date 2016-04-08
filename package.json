@@ -3,7 +3,6 @@
   "scripts": {
     "start": "babel-node ./server.js",
     "update-schema": "babel-node ./scripts/updateSchema.js",
-    "preinstall": "cd ../.. && npm install --ignore-scripts && cd scripts/babel-relay-plugin && npm install --ignore-scripts"
   },
   "dependencies": {
     "babel-core": "^6.5.2",

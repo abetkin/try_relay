@@ -25,10 +25,14 @@ export default class AddPostMutation extends Relay.Mutation {
 
   getFatQuery() {
     return Relay.QL`
-      fragment on AddPostPayload @relay(pattern: true) {
+      fragment on AddPostPayload {
         post {
           id
           comments {
+            author {
+              name
+              email
+            }
             title
             text
             parent
