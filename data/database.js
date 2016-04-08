@@ -32,7 +32,6 @@ export function createPost({parent, text, tags, title}) {
     parent, text, tags, title,
     id: blog.id + posts.length,
   }
-  console.log('new post', newPost)
   posts.push(newPost)
   return newPost
 }

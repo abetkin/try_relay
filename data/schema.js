@@ -32,7 +32,6 @@ import {
 const {nodeInterface, nodeField} = nodeDefinitions(
   (globalId) => {
     const {type, id} = fromGlobalId(globalId)
-    console.log('nodedef', type, id)
     if (type === 'User') {
       return me
     } else if (type === 'Post') {
